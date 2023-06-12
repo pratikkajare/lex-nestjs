@@ -1,0 +1,260 @@
+// import { MongoClient } from 'mongodb';
+
+// const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
+export const validate = async (slots) => {
+  if (!slots['UploadType']) {
+    return {
+      isValid: false,
+      violatedSlot: 'UploadType',
+    };
+  }
+  if (
+    slots.UploadType.value.resolvedValues.indexOf('Upload File') !== -1 &&
+    !slots['FirstName']
+  ) {
+    if (!slots['ExcelSlot']) {
+      return {
+        isValid: false,
+        violatedSlot: 'ExcelSlot',
+      };
+    }
+  }
+  if (!slots['ExcelSlot']) {
+    if (!slots['FirstName']) {
+      return {
+        isValid: false,
+        violatedSlot: 'FirstName',
+      };
+    }
+
+    // if (!slots['LastName']) {
+    //   return {
+    //     isValid: false,
+    //     violatedSlot: 'LastName',
+    //   };
+    // }
+
+    // if (!slots['PhoneNumber']) {
+    //   return {
+    //     isValid: false,
+    //     violatedSlot: 'PhoneNumber',
+    //   };
+    // }
+    // if (!slots['GenderType']) {
+    //   return {
+    //     isValid: false,
+    //     violatedSlot: 'GenderType',
+    //   };
+    // }
+    // if (!slots['ProfileType']) {
+    //   return {
+    //     isValid: false,
+    //     violatedSlot: 'ProfileType',
+    //   };
+    // }
+    // if (!slots['AddressType']) {
+    //   return {
+    //     isValid: false,
+    //     violatedSlot: 'AddressType',
+    //   };
+    // }
+    // if (!slots['CityType']) {
+    //   return {
+    //     isValid: false,
+    //     violatedSlot: 'CityType',
+    //   };
+    // }
+    // if (!slots['StateType']) {
+    //   return {
+    //     isValid: false,
+    //     violatedSlot: 'StateType',
+    //   };
+    // }
+    // if (!slots['CountryType']) {
+    //   return {
+    //     isValid: false,
+    //     violatedSlot: 'CountryType',
+    //   };
+    // }
+    if (
+      !slots['ResponsibleType'] ||
+      !slots.ResponsibleType.value.resolvedValues.length >= 1
+    ) {
+      return {
+        isValid: false,
+        violatedSlot: 'ResponsibleType',
+      };
+    }
+
+    if (
+      slots.ResponsibleType.value.resolvedValues.indexOf('Country') !== -1 &&
+      !slots.ResponsibleType.value.resolvedValues.indexOf('State') !== -1 &&
+      !slots.ResponsibleType.value.resolvedValues.indexOf('District') !== -1 &&
+      !slots.ResponsibleType.value.resolvedValues.indexOf('Tahsil') !== -1 &&
+      slots['FirstName']
+    ) {
+      if (!slots['ResponsibleCountry']) {
+        return {
+          isValid: false,
+          violatedSlot: 'ResponsibleCountry',
+        };
+      }
+    }
+
+    if (
+      !slots.ResponsibleType.value.resolvedValues.indexOf('Country') !== -1 &&
+      slots.ResponsibleType.value.resolvedValues.indexOf('State') !== -1 &&
+      !slots.ResponsibleType.value.resolvedValues.indexOf('District') !== -1 &&
+      !slots.ResponsibleType.value.resolvedValues.indexOf('Tahsil') !== -1 &&
+      slots['FirstName']
+    ) {
+      if (!slots['ResponsibleCountry']) {
+        return {
+          isValid: false,
+          violatedSlot: 'ResponsibleCountry',
+        };
+      }
+      if (!slots['ResponsibleState']) {
+        return {
+          isValid: false,
+          violatedSlot: 'ResponsibleState',
+        };
+      }
+    }
+
+    if (
+      !slots.ResponsibleType.value.resolvedValues.indexOf('Country') !== -1 &&
+      !slots.ResponsibleType.value.resolvedValues.indexOf('State') !== -1 &&
+      slots.ResponsibleType.value.resolvedValues.indexOf('District') !== -1 &&
+      !slots.ResponsibleType.value.resolvedValues.indexOf('Tahsil') !== -1 &&
+      slots['FirstName']
+    ) {
+      if (!slots['ResponsibleCountry']) {
+        return {
+          isValid: false,
+          violatedSlot: 'ResponsibleCountry',
+        };
+      }
+      if (!slots['ResponsibleState']) {
+        return {
+          isValid: false,
+          violatedSlot: 'ResponsibleState',
+        };
+      }
+      if (!slots['ResponsibleDistrict']) {
+        return {
+          isValid: false,
+          violatedSlot: 'ResponsibleDistrict',
+        };
+      }
+    }
+    if (
+      !slots.ResponsibleType.value.resolvedValues.indexOf('Country') !== -1 &&
+      !slots.ResponsibleType.value.resolvedValues.indexOf('State') !== -1 &&
+      !slots.ResponsibleType.value.resolvedValues.indexOf('District') !== -1 &&
+      slots.ResponsibleType.value.resolvedValues.indexOf('Tahsil') !== -1 &&
+      slots['FirstName']
+    ) {
+      if (!slots['ResponsibleCountry']) {
+        return {
+          isValid: false,
+          violatedSlot: 'ResponsibleCountry',
+        };
+      }
+      if (!slots['ResponsibleState']) {
+        return {
+          isValid: false,
+          violatedSlot: 'ResponsibleState',
+        };
+      }
+      if (!slots['ResponsibleDistrict']) {
+        return {
+          isValid: false,
+          violatedSlot: 'ResponsibleDistrict',
+        };
+      }
+      if (!slots['ResponsibleTahsil']) {
+        return {
+          isValid: false,
+          violatedSlot: 'ResponsibleTahsil',
+        };
+      }
+    }
+  }
+  return {
+    isValid: true,
+  };
+};
+
+export const handler = async (event) => {
+  console.log(JSON.stringify(event));
+  // console.log(event.sessionState?.intent?.slots.value, 'db values');
+  const slots = event.sessionState?.intent?.slots;
+  const intent = event.sessionState?.intent?.name;
+  console.log(event.invocationSource, 'invocationSource');
+  const validation_result = await validate(slots);
+  const data =
+    event.sessionState?.intent?.slots?.ExcelSlot?.value?.originalValue;
+  console.log(data, 'ExcelValues1');
+  if (event?.invocationSource === 'DialogCodeHook') {
+    // console.log('validation_result', validation_result);
+
+    if (!validation_result.isValid) {
+      const response = {
+        sessionState: {
+          dialogAction: {
+            slotToElicit: validation_result.violatedSlot,
+            type: 'ElicitSlot',
+          },
+          intent: {
+            name: intent,
+            slots: slots,
+          },
+        },
+      };
+      return response;
+    }
+    // const firstName= event.sessionState?.intent?.slots.FirstName.value.originalValue;
+    //       const lastName= event.sessionState?.intent?.slots.LastName.value.originalValue;
+    //       console.log(firstName,lastName,'store data to db');
+    return {
+      sessionState: {
+        dialogAction: {
+          type: 'Close',
+        },
+        intent: {
+          name: intent,
+          slots: slots,
+          state: 'Fulfilled',
+        },
+      },
+      messages: [
+        {
+          contentType: 'PlainText',
+          content: 'Your Data Uploaded SuccessfullyB',
+        },
+      ],
+    };
+  }
+
+  const response = {
+    sessionState: {
+      dialogAction: {
+        type: 'Close',
+      },
+      intent: {
+        name: intent,
+        slots: slots,
+        state: 'Fulfilled',
+      },
+    },
+    messages: [
+      {
+        contentType: 'PlainText',
+        content: 'Your Data Uploaded SuccessfullyB',
+      },
+    ],
+  };
+  return response;
+};
